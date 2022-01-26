@@ -12,7 +12,7 @@ wb <- loadWorkbook(restackor_xls_loc)
 
 #### Set static damper properties ####
 damper_properties <- 
-  list(shim_id = c(6, 6, 3), #property value, excel row, excel column
+  list(shim_id = c(1, 6, 3), #property value, excel row, excel column
        d_rod = c(2.5, 4, 8)
        )
 
@@ -57,12 +57,61 @@ run_shimstack <- function(shim_df, outfile) {
 }
 
 #define shimstack
-shim_widths <- c(10, 10, 10, 7, 8)
-shim_thickness <- c(0.1, 0.1, 0.1, 0.2, 2)
+shim_widths <- c(10,
+                 10,
+                 5,
+                 9,
+                 7,
+                 5,
+                 4,
+                 10
+                 )
+
+shim_thickness <- c(0.05,
+                    0.05,
+                    0.03,
+                    0.075,
+                    0.075,
+                    0.075,
+                    0.15,
+                    0.4
+                    )
 
 shims <- data.frame(width = shim_widths,
                     thickness = shim_thickness
 )
 
+res_path <- file.path(results_loc, 'my_stack.csv')
+
 run_shimstack(shim_df = shims,
-              outfile = file.path(results_loc, 'my_stack.csv'))
+              outfile = res_path)
+
+#### Plot outcomes ####
+result <- read.csv(res_path, skip = 1)[-1,] %>% 
+  sapply(., as.numeric ) %>% 
+  as.data.frame()
+
+colnames(dat) <- str_remove_all(colnames(result), 'X.')
+
+ggplot(
+  dat[1:18, ] %>%
+    pivot_longer(
+      cols = U.clk:U.clsd,
+      names_to = 'setting',
+      values_to = 'velocity'
+    ),
+  aes(
+    y = Fstack,
+    x = velocity,
+    group = setting,
+    color = setting
+  )
+) +
+  geom_line(size = 1.5, alpha = 0.6) +
+  scale_color_manual(
+    labels = c('Middle', 'Closed', 'Open'),
+    name = 'Clicker\nsetting',
+    values = c('black', 'red', 'blue')
+  ) +
+  xlab('Shaft velocity (m/sec)') +
+  ylab('Force (kgf)')
