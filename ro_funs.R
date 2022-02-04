@@ -139,6 +139,15 @@ run_shimstack <- function(shim_df, outfile) {
             to = outfile)
 }
 
+tidy_restackor_results <- function(results_file){
+  result <- read.csv(results_file, skip = 1)[-1,] %>% 
+    sapply(., as.numeric ) %>% 
+    as.data.frame()
+  
+  colnames(result) <- str_remove_all(colnames(result), 'X.')
+  return(result)
+}
+
 make_add_profile <- function(start_shim, end_shim, shim_count, shape){
   raw_widths <- dweibull(seq_len(shim_count), shape = shape, scale = 1, log = TRUE)
   round(scales::rescale(raw_widths, to = c(end_shim, start_shim)))
