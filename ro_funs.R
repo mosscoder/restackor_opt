@@ -28,7 +28,7 @@ set_fixed_params <- function(shim_id = NULL,
                        k_spring = NULL
                        ) {
   
-  wb <- XLConnect::loadWorkbook(restackor_xls_loc)
+  wb <- XLConnect::loadWorkbook(restackor_xls)
   
   excel_map <- 
     list(si = c(shim_id, 6, 3), 
@@ -85,7 +85,7 @@ set_adjusters <- function(n_click = NULL,
                           f_max = NULL,
                           u_wheel = 8,
                           preload = NULL) {
-  wb <- XLConnect::loadWorkbook(restackor_xls_loc)
+  wb <- XLConnect::loadWorkbook(restackor_xls)
   
   excel_map <-
     list(
