@@ -58,9 +58,9 @@ set_fixed_params <- function(shim_id = NULL,
       
     XLConnect::writeWorksheet(
       object = wb,
-      data = focal_prop[1],
-      startRow = focal_prop[2],
-      startCol = focal_prop[3],
+      data = ifelse(i == 'vs', as.character(focal_prop[1]), as.numeric(focal_prop[1])),
+      startRow = as.numeric(focal_prop[2]),
+      startCol = as.numeric(focal_prop[3]),
       sheet = 'Plots',
       header = F
     )
