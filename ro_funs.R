@@ -92,7 +92,7 @@ set_adjusters <- function(n_click = NULL,
       nc = c(n_click, 11, 8),
       fm = c(f_max, 11, 9),
       uw = c(u_wheel, 11, 10),
-      p = c(pre, 6, 14)
+      p = c(preload, 6, 14)
     )
   
   for (i in names(excel_map)) {
