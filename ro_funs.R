@@ -77,8 +77,29 @@ load_database_params <- function(damper_name){
   download.file('https://docs.google.com/spreadsheets/d/e/2PACX-1vQ6d6Dh3Yz9j4ANKedh1fBz0g-LsnqcaASWh3VeZQqyVIrVj0EJDV8DRyAMbqtg0DpE8Ndlde3hi4Rf/pub?output=csv',
                 destfile = dloc)
   
-  focal_props <- read.csv(dloc)[, damper_name]
-  set_fixed_params(focal_props)
+  focal_props <- read.csv(dloc)[, c('param', damper_name)]
+  flist <- focal_props[,2, drop = TRUE] 
+  names(flist) <- focal_props[,1]
+  
+  set_fixed_params(shim_id =  flist['shim_id'] %>% as.numeric,
+                   float =  flist['float'] %>% as.numeric,
+                   d_rod  =  flist['d_rod'] %>% as.numeric,
+                   d_valve =  flist['d_valve'] %>% as.numeric,
+                   w_seat =  flist['w_seat'] %>% as.numeric,
+                   v_spec =  flist['v_spec'] %>% as.character,
+                   r_port =  flist['r_port'] %>% as.numeric,
+                   d_port =  flist['d_port'] %>% as.numeric,
+                   w_port =  flist['w_port'] %>% as.numeric,
+                   n_port =  flist['n_port'] %>% as.numeric,
+                   h_deck =  flist['h_deck'] %>% as.numeric,
+                   d_leak =  flist['d_leak'] %>% as.numeric,
+                   d_throat =  flist['d_throat'] %>% as.numeric,
+                   n_throat =  flist['n_throat'] %>% as.numeric,
+                   d_bleed =  flist['d_bleed'] %>% as.numeric,
+                   max_click =  flist['max_click'] %>% as.numeric,
+                   d_hsc =  flist['d_hsc'] %>% as.numeric,
+                   k_spring =  flist['k_spring'] %>% as.numeric
+                   )
 }
 
 set_adjusters <- function(n_click = NULL,
