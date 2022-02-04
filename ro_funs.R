@@ -156,7 +156,7 @@ run_shimstack <- function(shim_df, outfile) {
   
   system(restackor_exec)
   
-  file.copy(from = restackor_exec,
+  file.copy(from = restack_csv,
             to = outfile)
 }
 
