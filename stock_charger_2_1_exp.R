@@ -1,7 +1,6 @@
 source('https://raw.githubusercontent.com/mosscoder/restackor_opt/main/ro_funs.R') # restackor opt code
 
 library(tidyverse)
-library(XLConnect)
 
 results_loc <- 'Z:\\Downloads\\restackor_results' # folder to save results
 
