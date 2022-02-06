@@ -13,6 +13,7 @@ set_adjusters(n_click = 9, # set the adjusters
 # the stock charger shim stack
 stock_charger_stack <- data.frame(width = c(18, 16, 14, 8, 10), 
                                   thickness = c(0.1, 0.1, 0.1, 0.4, 4))
+
 # run restackor.exe
 run_shimstack(shim_df = stock_charger_stack,
               outfile = file.path(results_loc, 'stock_charger.csv'))
