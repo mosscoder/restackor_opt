@@ -22,12 +22,12 @@ run_shimstack(shim_df = stock_charger_stack,
 result <- tidy_restackor_results(file.path(results_loc, 'stock_charger.csv'))
 
 png(file.path(results_loc, 'stock_charger_force_plot.png'), 
-    height = 5, width = 5, res = 200, units = 'in')
-ggplot(result[1:18,] %>% 
+    height = 4, width = 8, res = 200, units = 'in')
+ggplot(result %>% 
          pivot_longer(cols = U.clk:U.clsd,
                       names_to = 'setting',
                       values_to = 'velocity'),
-       aes(y = Fstack,
+       aes(y = Fstack.1,
            x = velocity, 
            group = setting,
            color = setting)
