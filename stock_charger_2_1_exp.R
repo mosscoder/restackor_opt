@@ -1,6 +1,7 @@
 source('https://raw.githubusercontent.com/mosscoder/restackor_opt/main/ro_funs.R') # restackor opt code
 
 library(tidyverse)
+library(patchwork)
 
 results_loc <- 'Z:\\Downloads\\restackor_results' # folder to save results
 
@@ -27,29 +28,52 @@ run_shimstack(shim_df = candidate_stack,
 
 #plot outcome
 stock_result <- tidy_restackor_results(file.path(results_loc, 'stock_charger.csv')) %>% 
-  pivot_longer(cols = U.clk:U.clsd,
-               names_to = 'setting',
-               values_to = 'velocity') %>% 
-  mutate(Stack = 'Stock charger')
+  mutate(Stack = 'Stock Charger 2.1')
 
 candidate_result <- tidy_restackor_results(file.path(results_loc, 'candidate.csv')) %>% 
-  pivot_longer(cols = U.clk:U.clsd,
-               names_to = 'setting',
-               values_to = 'velocity') %>% 
   mutate(Stack = 'Candidate')
 
-png(file.path(results_loc, 'stock_charger_force_plot.png'), 
-    height = 4, width = 8, res = 200, units = 'in')
-ggplot(rbind(stock_result, candidate_result),
-       aes(y = Fshaft,
-           x = velocity, 
-           group = setting,
-           linetype = setting,
-           color = Stack)
+all_results <- rbind(stock_result, candidate_result)
+
+all_stacks <- rbind(stock_charger_stack %>% mutate(Stack = 'Stock Charger 2.1'),
+                    candidate_stack %>% mutate(Stack = 'Candidate')
+                    )
+
+p1 <- ggplot(
+  all_results,
+  aes(
+    y = U.clk,
+    ymin = U.wo,
+    ymax = U.clsd,
+    x = Fshaft,
+    group = Stack,
+    fill = Stack,
+    color = Stack
+  )
 ) +
-  geom_line(size = 1, alpha = 0.6) +
-  scale_linetype_manual(values = c(1,2,2)) +
-  guides(linetype = 'none') +
-  xlab('Shaft velocity (m/sec)') +
-  ylab('Force (kgf)')
+  geom_ribbon(size = 0, alpha = 0.2) +
+  geom_line(size = 1, alpha = 1) +
+  coord_flip()+
+  ylab('Shaft velocity (m/sec)') +
+  xlab('Force (kgf)') +
+  theme_bw() +
+  theme(legend.position = 'top') 
+
+p2 <- ggplot(all_stacks %>% 
+               group_by(Stack) %>% 
+               mutate(n = row_number()) %>% 
+               filter(n != max(n)), aes(y = width, x = factor(n), width = thickness*1.5)) +
+  geom_bar(stat = 'identity', fill = 'black') +
+  geom_label(aes(x = factor(n), y = 1, label = paste(width, thickness, sep = 'x')),
+             size = 2) +
+  facet_wrap(~Stack, ncol = 1) +
+  coord_flip() +
+  theme_classic() +
+  xlab('') +
+  ylab('Width (mm)')
+  
+
+png(file.path(results_loc, 'stock_charger_force_plot.png'), 
+    height = 5, width = 9, res = 200, units = 'in')
+p1 + p2 + plot_layout(width = c(3, 1))
 dev.off()
