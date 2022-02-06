@@ -57,7 +57,9 @@ p1 <- ggplot(
   ylab('Shaft velocity (m/sec)') +
   xlab('Force (kgf)') +
   theme_bw() +
-  theme(legend.position = 'top') 
+  theme(legend.position = 'top') +
+  ggtitle("Produced with www.shimrestackor.com models 
+          and libraries from https://github.com/mosscoder/restackor_opt/")
 
 p2 <- ggplot(all_stacks %>% 
                group_by(Stack) %>% 
