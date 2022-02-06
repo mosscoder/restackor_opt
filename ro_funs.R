@@ -1,4 +1,4 @@
-restackor_xls <- 'C:\\ReStackor\\Excel\\metric-ReStackor.xls'
+restack_in <- 'C:\\ReStackor\\Work_Dir\\Stack.in'
 restack_csv <- 'C:\\ReStackor\\Work_Dir\\restackor.csv'
 restackor_exec <- 'C:\\ReStackor\\Code\\restackor.exe'
 
@@ -8,67 +8,64 @@ estimate_coil_rate <- function(d_wire, d_coil, n_active){
   top/bottom
 }
 
+change_line_ind <- function(line, ind, val){
+  stack <- readLines(restack_in)
+  focal_line <- stack[line]
+  line_broken <- str_split(focal_line, pattern = ',')
+  line_broken[[1]][ind] <- val
+  writeLines(str_flatten(line_broken[[1]], collapse = ','), restack_in)
+}
+
 set_fixed_params <- function(shim_id = NULL,
-                       float = NULL,
-                       d_rod = NULL,
-                       d_valve = NULL,
-                       w_seat = NULL,
-                       v_spec = NULL,
-                       r_port = NULL,
-                       d_port = NULL,
-                       w_port = NULL,
-                       n_port = NULL,
-                       h_deck = NULL,
-                       d_leak = NULL,
-                       d_throat = NULL,
-                       n_throat = NULL,
-                       d_bleed = NULL,
-                       max_click = NULL,
-                       d_hsc = NULL,
-                       k_spring = NULL
-                       ) {
+                             float = NULL,
+                             d_rod = NULL,
+                             d_valve = NULL,
+                             w_seat = NULL,
+                             v_spec = NULL,
+                             r_port = NULL,
+                             d_port = NULL,
+                             w_port = NULL,
+                             n_port = NULL,
+                             h_deck = NULL,
+                             d_leak = NULL,
+                             d_throat = NULL,
+                             n_throat = NULL,
+                             d_bleed = NULL,
+                             max_click = NULL,
+                             d_hsc = NULL,
+                             k_spring = NULL
+) {
   
-  wb <- XLConnect::loadWorkbook(restackor_xls)
-  
-  excel_map <- 
-    list(si = c(shim_id, 6, 3), 
-         f = c(float, 6, 4), 
-         dr = c(d_rod, 4, 8), 
-         dv = c(d_valve, 4, 9),  
-         ws = c(w_seat, 4, 10),
-         vs = c(v_spec, 4, 11),
-         rp = c(r_port, 6, 8), 
-         dp = c(d_port, 6, 9), 
-         wp = c(w_port, 6, 10 ),
-         np = c(n_port, 6, 11),
-         hd = c(h_deck, 8, 8),
-         dl = c(d_leak, 8, 9),
-         dt = c(d_throat, 8, 10),
-         nt = c(n_throat, 8, 11),
-         db = c(d_bleed, 4, 14),
-         mc = c(max_click, 4, 15),
-         dh = c(d_hsc, 6, 15),
-         k = c(k_spring, 6, 16)
-         )
-  
-  for(i in names(excel_map)){
-    focal_prop <- excel_map[[i]]
-    
-    if(!is.null(focal_prop[1])) { 
-      
-    XLConnect::writeWorksheet(
-      object = wb,
-      data = ifelse(i == 'vs', as.character(focal_prop[1]), as.numeric(focal_prop[1])),
-      startRow = as.numeric(focal_prop[2]),
-      startCol = as.numeric(focal_prop[3]),
-      sheet = 'Plots',
-      header = F
+  param_map <- 
+    list(si = c(11, 3, shim_id), 
+         f = c(11, 4, float), 
+         dr = c(2, 2, d_rod), 
+         dv = c(2, 3, d_valve),  
+         ws = c(2, 4, w_seat),
+         vs = c(2, 5, v_spec),
+         rp = c(4, 1, r_port), 
+         dp = c(4, 2, d_port), 
+         wp = c(4, 3, w_port),
+         np = c(4, 4, n_port),
+         hd = c(4, 5, h_deck),
+         dl = c(4, 6, d_leak),
+         dt = c(4, 7, d_throat),
+         nt = c(4, 8, n_throat),
+         db = c(4, 9, d_bleed),
+         mc = c(4, 10, max_click),
+         dh = c(7, 1, d_hsc),
+         k = c(7, 3, k_spring)
     )
-      
-      }
-  }
   
-  XLConnect::saveWorkbook(wb)
+  for (i in names(param_map)) {
+    focal_prop <- param_map[[i]]
+    
+    if (!is.null(focal_prop)) {
+      change_line_ind(line = focal_prop[1],
+                      ind = focal_prop[2],
+                      val = focal_prop[3])
+    }
+  }
   
 }
 
@@ -106,53 +103,39 @@ set_adjusters <- function(n_click = NULL,
                           f_max = NULL,
                           u_wheel = 8,
                           preload = NULL) {
-  wb <- XLConnect::loadWorkbook(restackor_xls)
-  
-  excel_map <-
+  adjust_map <-
     list(
-      nc = c(n_click, 11, 8),
-      fm = c(f_max, 11, 9),
-      uw = c(u_wheel, 11, 10),
-      p = c(preload, 6, 14)
+      nc = c(9, 1, n_click),
+      fm = c(11, 1, f_max),
+      uw = c(11, 2, u_wheel),
+      p = c(7, 2, preload)
     )
   
-  for (i in names(excel_map)) {
-    focal_prop <- excel_map[[i]]
+  
+  for (i in names(adjust_map)) {
+    focal_prop <- adjust_map[[i]]
     
-    if (!is.null(focal_prop[1])) {
-      XLConnect::writeWorksheet(
-        object = wb,
-        data = focal_prop[1],
-        startRow = focal_prop[2],
-        startCol = focal_prop[3],
-        sheet = 'Plots',
-        header = F
-      )
-      
+    if (!is.null(focal_prop[3])) {
+      change_line_ind(line = focal_prop[1],
+                      ind = focal_prop[2],
+                      val = focal_prop[3])
     }
   }
-  
-  XLConnect::saveWorkbook(wb)
   
 }
                     
 run_shimstack <- function(shim_df, outfile) {
-  wb <- XLConnect::loadWorkbook(restackor_xls)
+  stack <- readLines(restack_in)
+  for(i in 13:62){
+    stack[i] <- paste(i-12,-1,-1, sep = ',')
+  }
   
-  XLConnect::clearRange(object = wb,
-             sheet = 'Plots',
-             coords = c(9, 3, 58, 4))
+  for(i in seq_len(nrow(shim_df))){
+    stack[i+12] <- paste(i,shim_df[i,1],shim_df[i,2], sep = ',')
+  }
   
-  XLConnect::writeWorksheet(
-    object = wb,
-    data = shim_df,
-    startRow = 9,
-    startCol = 3,
-    sheet = 'Plots',
-    header = F
-  )
   
-  XLConnect::saveWorkbook(wb)
+  writeLines(stack, restack_in)
   
   system(restackor_exec)
   
