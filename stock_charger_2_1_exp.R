@@ -9,7 +9,7 @@ load_database_params('charger_2_1_base') # load the charger 2.1 damper propertie
 
 set_adjusters(n_click = 9, # set the adjusters
               preload = 2,
-              u_wheel = 3)
+              u_wheel = 10)
 
 # the stock charger shim stack
 stock_charger_stack <- data.frame(width = c(18, 16, 14, 8, 10), 
@@ -64,7 +64,7 @@ p1 <- ggplot(
 p2 <- ggplot(all_stacks %>% 
                group_by(Stack) %>% 
                mutate(n = row_number()) %>% 
-               filter(n != max(n)), aes(y = width, x = factor(n), width = thickness*1.5)) +
+               filter(n != max(n)), aes(y = width/2, x = factor(n), width = thickness*1.5)) +
   geom_bar(stat = 'identity', fill = 'black') +
   geom_label(aes(x = factor(n), y = 1, label = paste(width, thickness, sep = 'x')),
              size = 2) +
