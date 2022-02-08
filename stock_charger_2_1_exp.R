@@ -15,11 +15,11 @@ set_adjusters(n_click = 9, # set the adjusters
 stock_charger_stack <- data.frame(width = c(18, 16, 14, 8, 10), 
                                   thickness = c(0.1, 0.1, 0.1, 0.4, 4))
 
-candidate_stack_a <- data.frame(width = c(18, 18, 18, 18, 18, 8, 10), 
-                                  thickness = c(0.1, 0.1, 0.1, 0.1, 0.1, 0.4, 4))
+candidate_stack_a <- data.frame(width = c(18, 18, 18, 18, 18, 18, 18, 8, 10), 
+                                thickness = c(0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.4, 4))
 
-candidate_stack_b <- data.frame(width = c(18, 17, 16, 15, 14, 13, 12, 0.4, 10), 
-                              thickness = c(0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.4, 4))
+candidate_stack_b <- data.frame(width = c(18, 17, 16, 15, 14, 13, 12, 8, 10), 
+                                thickness = c(0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.4, 4))
 
 
 # run restackor.exe
@@ -38,17 +38,17 @@ stock_result <- tidy_restackor_results(file.path(results_loc, 'stock_charger.csv
   mutate(Stack = 'Stock Charger 2.1')
 
 candidate_a_result <- tidy_restackor_results(file.path(results_loc, 'candidate_a.csv')) %>% 
-  mutate(Stack = 'Candidate_a')
+  mutate(Stack = 'Candidate A')
 
 candidate_b_result <- tidy_restackor_results(file.path(results_loc, 'candidate_b.csv')) %>% 
-  mutate(Stack = 'Candidate_b')
+  mutate(Stack = 'Candidate B')
 
-all_results <- rbind(stock_result, candidate_result)
+all_results <- rbind(stock_result, candidate_a_result, candidate_b_result)
 
 all_stacks <- rbind(stock_charger_stack %>% mutate(Stack = 'Stock Charger 2.1'),
-                    candidate_a_result %>% mutate(Stack = 'Candidate A'),
-                    candidate_b_result %>% mutate(Stack = 'Candidate B')
-                    )
+                    candidate_stack_a %>% mutate(Stack = 'Candidate A'),
+                    candidate_stack_b %>% mutate(Stack = 'Candidate B')
+)
 
 p1 <- ggplot(
   all_results,
@@ -65,6 +65,7 @@ p1 <- ggplot(
   geom_ribbon(size = 0, alpha = 0.2) +
   geom_line(size = 1, alpha = 1) +
   coord_flip()+
+  scale_y_continuous(breaks = seq(0, round(max(all_results$U.wo)), by = 1)) +
   ylab('Shaft velocity (m/sec)') +
   xlab('Force (kgf)') +
   theme_bw() +
@@ -78,13 +79,13 @@ p2 <- ggplot(all_stacks %>%
                filter(n != max(n)), aes(y = width/2, x = factor(n), width = thickness*1.5)) +
   geom_bar(stat = 'identity', fill = 'black') +
   geom_label(aes(x = factor(n), y = 1, label = paste(width, thickness, sep = 'x')),
-             size = 2) +
+             size = 1.5) +
   facet_wrap(~Stack, ncol = 1) +
+  scale_y_continuous(breaks = seq(0, round(max(all_stacks$width/2)))) +
   coord_flip() +
   theme_classic() +
   xlab('') +
-  ylab('Width (mm)')
-  
+  ylab('Shim radius (mm)')
 
 png(file.path(results_loc, 'stock_charger_force_plot.png'), 
     height = 6, width = 9, res = 200, units = 'in')
