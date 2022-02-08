@@ -9,34 +9,45 @@ load_database_params('charger_2_1_base') # load the charger 2.1 damper propertie
 
 set_adjusters(n_click = 9, # set the adjusters
               preload = 2,
-              u_wheel = 10)
+              u_wheel = 8)
 
 # the stock charger shim stack
 stock_charger_stack <- data.frame(width = c(18, 16, 14, 8, 10), 
                                   thickness = c(0.1, 0.1, 0.1, 0.4, 4))
 
-candidate_stack <- data.frame(width = c(18, 18, 18, 16, 14, 8, 10), 
+candidate_stack_a <- data.frame(width = c(18, 18, 18, 18, 18, 8, 10), 
                                   thickness = c(0.1, 0.1, 0.1, 0.1, 0.1, 0.4, 4))
+
+candidate_stack_b <- data.frame(width = c(18, 17, 16, 15, 14, 13, 12, 0.4, 10), 
+                              thickness = c(0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.4, 4))
+
 
 # run restackor.exe
 run_shimstack(shim_df = stock_charger_stack,
               outfile = file.path(results_loc, 'stock_charger.csv'))
 
-run_shimstack(shim_df = candidate_stack,
-              outfile = file.path(results_loc, 'candidate.csv'))
+run_shimstack(shim_df = candidate_stack_a,
+              outfile = file.path(results_loc, 'candidate_a.csv'))
+
+run_shimstack(shim_df = candidate_stack_b,
+              outfile = file.path(results_loc, 'candidate_b.csv'))
 
 
 #plot outcome
 stock_result <- tidy_restackor_results(file.path(results_loc, 'stock_charger.csv')) %>% 
   mutate(Stack = 'Stock Charger 2.1')
 
-candidate_result <- tidy_restackor_results(file.path(results_loc, 'candidate.csv')) %>% 
-  mutate(Stack = 'Candidate')
+candidate_a_result <- tidy_restackor_results(file.path(results_loc, 'candidate_a.csv')) %>% 
+  mutate(Stack = 'Candidate_a')
+
+candidate_b_result <- tidy_restackor_results(file.path(results_loc, 'candidate_b.csv')) %>% 
+  mutate(Stack = 'Candidate_b')
 
 all_results <- rbind(stock_result, candidate_result)
 
 all_stacks <- rbind(stock_charger_stack %>% mutate(Stack = 'Stock Charger 2.1'),
-                    candidate_stack %>% mutate(Stack = 'Candidate')
+                    candidate_a_result %>% mutate(Stack = 'Candidate A'),
+                    candidate_b_result %>% mutate(Stack = 'Candidate B')
                     )
 
 p1 <- ggplot(
@@ -76,6 +87,6 @@ p2 <- ggplot(all_stacks %>%
   
 
 png(file.path(results_loc, 'stock_charger_force_plot.png'), 
-    height = 5, width = 9, res = 200, units = 'in')
+    height = 6, width = 9, res = 200, units = 'in')
 p1 + p2 + plot_layout(width = c(3, 1))
 dev.off()
