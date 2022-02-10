@@ -8,12 +8,21 @@ results_loc <- 'Z:\\Downloads\\restackor_results'
 
 if(!dir.exists(results_loc)){dir.create(results_loc)}
 
-wb <- loadWorkbook(restackor_xls_loc)
-
 #### Set static damper properties ####
-damper_properties <- 
-  list(shim_id = c(1, 6, 3), #property value, excel row, excel column
-       d_rod = c(2.5, 4, 8)
+
+#These are mostly estimates for Rockshox Charger 2.1
+
+damper_properties <- # format: property value, excel row, excel column
+  list(shim_id = c(1, 6, 3), # ID shims
+       d_rod = c(10, 4, 8), # damper rod diameter
+       d_valve = c(18, 4, 9), # damper body ID (estimate)
+       w_seat = c(1, 4, 10),  # port seat width (estimate)
+       v_spec = c('BVc', 4, 11), # stroke direction (base valve)
+       r_port = c(2, 6, 8), # The radial distance from the valve center to the inside edge of the valve port in millimeters
+       d_port = c(3,6,9), #radial length of port
+       w_port = c(4,6,10 )
+       
+       
        )
 
 for(i in names(damper_properties)){
