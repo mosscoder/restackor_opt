@@ -148,3 +148,24 @@ make_add_profile <- function(start_shim, end_shim, shim_count, shape){
   raw_widths <- dweibull(seq_len(shim_count), shape = shape, scale = 1, log = TRUE)
   round(scales::rescale(raw_widths, to = c(end_shim, start_shim)))
 }
+
+stack_from_file <- function(x, 
+                            first_index = TRUE, 
+                            dim_sep = 'x',
+                            decimal = 'o'){
+  preproc <- basename(x) %>% 
+    str_remove('.csv') %>% 
+    str_split(pattern = '_', simplify = TRUE) %>%
+    t() %>% 
+    as.data.frame() 
+  
+  if(isTRUE(first_index)){
+    preproc <- preproc %>% slice(-1)
+  }
+  preproc %>% 
+    mutate(width = word(V1, sep = dim_sep),
+           thickness = word(V1, start = 2L, sep = dim_sep)
+    ) %>% 
+    mutate(thickness = str_replace(thickness, decimal, '.')) %>% 
+    select(width, thickness)
+}
