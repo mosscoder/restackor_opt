@@ -50,9 +50,12 @@ find_target_stack <- function(stack_dbase,
     mutate(Stack = factor(Stack))
   
   p1 <- ggplot(top, aes(x = U.clk, y = Fshaft, color = Stack, group = Stack)) +
-    geom_line(size = 1, alpha = 0.8) +
     geom_point(data= targ_points, aes(x = U.clk, y = Fshaft),
-               color = 'red', alpha = 0.75, size = 3.5, inherit.aes = F) +
+               color = 'red', alpha = 0.75, size = 2.5, inherit.aes = F) +
+    geom_smooth(data= targ_points, aes(x = U.clk, y = Fshaft),
+                method = "gam", formula = y ~ s(x, bs = "cs", k = nrow(targ_points)), se = FALSE,
+               color = 'black', size = 1, alpha = 0.3, inherit.aes = F, linetype = 2) +
+    geom_line(size = 1, alpha = 0.8) +
     theme_bw() +
     xlab('Shaft velocity (m/s)') +
     ylab('Force (kgf)') +
@@ -85,8 +88,8 @@ find_target_stack <- function(stack_dbase,
   return(ranked_stacks %>% head(top_n))
 }
 
-targ_v <- c(1.25, 6)
-targe_f <-  c(2, 20)
+targ_v <- c(1.25, 3.625, 6)
+targe_f <-  c(2, 11, 20)
 target_points <- data.frame(velocity = targ_v,
                             kgf = targe_f)
 
@@ -94,11 +97,13 @@ best_stacks <- find_target_stack(stack_dbase = '~/restackor_opt/two_stage_search
                                    dbase_garbage = 'all_params.csv',
                                    targ_points = target_points)
 
-targ_v <- c(1.25, 6)
-targe_f <-  c(2, 25)
+targ_v <- c(1.25, 3.625, 6)
+targe_f <-  c(2, 11,  22)
 target_points <- data.frame(velocity = targ_v,
                             kgf = targe_f)
 
 best_stacks <- find_target_stack(stack_dbase = '~/restackor_opt/two_stage_search/',
                                  dbase_garbage = 'all_params.csv',
                                  targ_points = target_points)
+
+
