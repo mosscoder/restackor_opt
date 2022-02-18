@@ -129,10 +129,18 @@ run_shimstack <- function(shim_df, outfile) {
   
   writeLines(stack, restack_in, sep = '\r\n')
   
+  try.wtl <- function(timeout = 30)
+  {
+    y <- R.utils::withTimeout(system(restackor_exec), timeout = timeout, onTimeout= "warning")
+    if(inherits(y, "try-error")) NA else 1 
+  }
+  exe_outcome <- try.wtl()
   system(restackor_exec)
   
+  if(!is.na(exe_outcome)){
   file.copy(from = restack_csv,
             to = outfile)
+    }
 }
 
 tidy_restackor_results <- function(results_file){
