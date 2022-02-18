@@ -135,7 +135,7 @@ run_shimstack <- function(shim_df, outfile) {
     if(inherits(y, "try-error")) NA else 1 
   }
   exe_outcome <- try.wtl()
-  system(restackor_exec)
+  #system(restackor_exec)
   
   if(!is.na(exe_outcome)){
   file.copy(from = restack_csv,
