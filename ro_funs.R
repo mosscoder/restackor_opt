@@ -139,7 +139,8 @@ run_shimstack <- function(shim_df, outfile) {
   
   if(!is.na(exe_outcome)){
   file.copy(from = restack_csv,
-            to = outfile)
+            to = outfile,
+            overwrite = TRUE)
     }
 }
 
