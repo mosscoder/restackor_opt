@@ -129,11 +129,11 @@ run_shimstack <- function(shim_df, outfile) {
   
   writeLines(stack, restack_in, sep = '\r\n')
   
-  before_exec <- read.csv(restack_csv)
+  before_exec <- read.csv(restack_csv, skip = 1)
   
   system(restackor_exec, timeout = 30)
   
-  after_exec <- read.csv(restack_csv)
+  after_exec <- read.csv(restack_csv, skip = 1)
   
   if (isTRUE(str_detect(names(last.warning), 'timed out' |
                         isTRUE(all.equal(
