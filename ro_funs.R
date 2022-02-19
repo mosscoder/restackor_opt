@@ -142,7 +142,7 @@ run_shimstack <- function(shim_df, outfile) {
     print(paste('Failure'))
     
   } else {
-    file.copy(from = restack_csv,
+    fs::file_copy(from = restack_csv,
               to = outfile,
               overwrite = TRUE)
     print(paste('Success'))
