@@ -135,10 +135,10 @@ run_shimstack <- function(shim_df, outfile) {
   
   after_exec <- read.csv(restack_csv, skip = 1)
   
-  if (isTRUE(str_detect(names(last.warning), 'timed out' |
+  if (isTRUE(str_detect(names(last.warning), 'timed out') |
                         isTRUE(all.equal(
                            before_exec,  after_exec
-                         ))))) {
+                         )))) {
     print(paste('Failure'))
     
   } else {
