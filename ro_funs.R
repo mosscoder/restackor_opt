@@ -139,13 +139,13 @@ run_shimstack <- function(shim_df, outfile) {
                         isTRUE(all.equal(
                            before_exec,  after_exec
                          ))))) {
-    print(paste(x, 'failed'))
+    print(paste('Failure'))
     
   } else {
     file.copy(from = restack_csv,
               to = outfile,
               overwrite = TRUE)
-    print(paste(x, 'succeeded'))
+    print(paste('Success'))
   }
 }
 
